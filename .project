@@ -41,5 +41,25 @@
 			<type>2</type>
 			<locationURI>ECLIPSE_HOME/arduinoPlugin/packages/arduino/hardware/avr/1.8.2/variants/eightanaloginputs</locationURI>
 		</link>
+		<link>
+			<name>libraries/ClickEncoder</name>
+			<type>2</type>
+			<location>C:/Users/soret/MEGA/Development/Arduino/libraries/ClickEncoder</location>
+		</link>
+		<link>
+			<name>libraries/LiquidCrystal_I2C</name>
+			<type>2</type>
+			<location>C:/Users/soret/MEGA/Development/Arduino/libraries/LiquidCrystal_I2C</location>
+		</link>
+		<link>
+			<name>libraries/TimerOne</name>
+			<type>2</type>
+			<location>C:/Users/soret/MEGA/Development/Arduino/libraries/TimerOne</location>
+		</link>
+		<link>
+			<name>libraries/Wire</name>
+			<type>2</type>
+			<locationURI>ECLIPSE_HOME/arduinoPlugin/packages/arduino/hardware/avr/1.8.2/libraries/Wire</locationURI>
+		</link>
 	</linkedResources>
 </projectDescription>
