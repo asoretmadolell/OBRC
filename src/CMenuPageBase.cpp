@@ -9,8 +9,8 @@
 /*                                                                         */
 /*                                                                         */
 /***************************************************************************/
-CMenuPageBase::CMenuPageBase()
+CMenuPageBase::CMenuPageBase( String PageName )
 {
     m_PageIndex = 0;
-    m_PageName = "Unknown";
+    PageName == "" ? m_PageName = "Unknown" : m_PageName = PageName;
 }

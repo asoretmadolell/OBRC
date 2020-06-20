@@ -2,7 +2,7 @@
 /*                                                                           */
 /*                                                                           */
 /*                                                                           */
-/* On-Board Racing COntroller v0.2                                           */
+/* On-Board Racing COntroller v0.3                                           */
 /*                                                                           */
 /*                                                                           */
 /*                                                                           */
@@ -35,17 +35,17 @@ bool buttonPressed = false;
 bool knobTurnedCW = false;
 bool knobTurnedCCW = false;
 bool pedalPressed = false;
-ClickEncoder* clickEncoder = new ClickEncoder( RECLK_PIN, REDT_PIN, RESW_PIN, 4 );
-int16_t clickEncoderValue;
+
+// Rotary encoder
+ClickEncoder* clickEncoder = NULL;
+int16_t clickEncoderValue = 0;
 int16_t clickEncoderLast = -1;
+
+// Menu
+CMenu* pMainMenu = NULL;
 
 // LCD screen
 LiquidCrystal_I2C Lcd( 0x27, 16, 2 );
-
-// Menu
-const int NumOfPages = 3;
-String PageNames[ NumOfPages ] = { "Page 1", "Page 2", "Page 3" };
-CMenu MainMenu( NumOfPages, PageNames );
 
 /*****************************************************************************/
 /*                                                                           */
@@ -57,12 +57,19 @@ CMenu MainMenu( NumOfPages, PageNames );
 void setup()
 {
     // Rotary encoder
+    clickEncoder = new ClickEncoder( RECLK_PIN, REDT_PIN, RESW_PIN, 4 );
     pinMode( RECLK_PIN, INPUT );
     pinMode( REDT_PIN, INPUT );
     pinMode( RESW_PIN, INPUT );//INPUT_PULLUP );
     Timer1.initialize( 1000 );
     Timer1.attachInterrupt( timerIsr );
     clickEncoder->setAccelerationEnabled( false );
+
+    // Menu
+    pMainMenu = new CMenu;
+    pMainMenu->AddPage( new CMenuPageBase( "Page 1" ) );
+    pMainMenu->AddPage( new CMenuPageBase( "Page 2" ) );
+    pMainMenu->AddPage( new CMenuPageBase( "Page 3" ) );
 
     Serial.begin( 9600 );
     Wire.begin();
@@ -72,9 +79,7 @@ void setup()
     Lcd.setCursor( 0, 0 );
     Lcd.print( "OBRC" );
     Lcd.setCursor( 0, 1 );
-    Lcd.print( "v0.2" );
-//    delay( 2000 );
-//    Lcd.clear();
+    Lcd.print( "v0.3 Dani pesao" );
 }
 
 /*****************************************************************************/
@@ -100,23 +105,22 @@ void loop()
 /*****************************************************************************/
 void menu()
 {
-
     // Menu logic !
 
     if( buttonPressed )
     {
-        switch( MainMenu.GetLevel() )
+        switch( pMainMenu->GetLevel() )
         {
             case 0:
-                MainMenu.SetLevel( 1 );
-                MainMenu.Print();
+                pMainMenu->SetLevel( 1 );
+                pMainMenu->Print();
                 break;
             case 1:
-                MainMenu.SetLevel( 2 );
-                MainMenu.Print();
+                pMainMenu->SetLevel( 2 );
+                pMainMenu->Print();
                 break;
             default:
-                MainMenu.SetLevel( 0 );
+                pMainMenu->SetLevel( 0 );
                 Lcd.clear();
                 break;
         }
@@ -125,14 +129,14 @@ void menu()
 
     if( knobTurnedCW )
     {
-        switch( MainMenu.GetLevel() )
+        switch( pMainMenu->GetLevel() )
         {
             case 1:
-                MainMenu.IncrementCurrentPageIndex();
-                MainMenu.Print();
+                pMainMenu->IncrementCurrentPageIndex();
+                pMainMenu->Print();
                 break;
             case 2:
-                MainMenu.Print();
+                pMainMenu->Print();
                 break;
             default:
                 break;
@@ -142,14 +146,14 @@ void menu()
 
     if( knobTurnedCCW )
     {
-        switch( MainMenu.GetLevel() )
+        switch( pMainMenu->GetLevel() )
         {
             case 1:
-                MainMenu.DecrementCurrentPageIndex();
-                MainMenu.Print();
+                pMainMenu->DecrementCurrentPageIndex();
+                pMainMenu->Print();
                 break;
             case 2:
-                MainMenu.Print();
+                pMainMenu->Print();
                 break;
             default:
                 break;

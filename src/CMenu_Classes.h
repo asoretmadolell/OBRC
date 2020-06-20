@@ -26,7 +26,7 @@ private:
     String    m_PageName;
 
 public:
-              CMenuPageBase();
+              CMenuPageBase( String PageName );
     virtual   ~CMenuPageBase() {}
 
     int       GetPageIndex() { return m_PageIndex; }
@@ -55,19 +55,18 @@ class CMenu
 private:
     int             m_Level;
     int             m_CurrentPageIndex;
-    int             m_TotalPages;
     CMenuPageBase*  m_pPages[ MAX_PAGES ];
 
 public:
-                    CMenu( int NumOfPages, String PageNames[] );
+                    CMenu();
     virtual         ~CMenu();
 
+    int             AddPage( CMenuPageBase* Page );
+    int             GetCount();
     int             GetLevel() { return m_Level; }
     void            SetLevel( int Level ) { m_Level = Level; }
     int             GetCurrentPageIndex() { return m_CurrentPageIndex; }
     void            SetCurrentPageIndex( int CurrentPageIndex ) { m_CurrentPageIndex = CurrentPageIndex; }
-    int             GetTotalPages() { return m_TotalPages; }
-    void            SetTotalPages( int TotalPages) { m_TotalPages = TotalPages; }
     CMenuPageBase*  GetPage( int PageIndex = -1 ) { return PageIndex == -1 ? m_pPages[ m_CurrentPageIndex ] : m_pPages[ PageIndex ]; }
 
     void            IncrementCurrentPageIndex();
