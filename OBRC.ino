@@ -2,7 +2,7 @@
 /*                                                                           */
 /*                                                                           */
 /*                                                                           */
-/* On-Board Racing COntroller v0.1                                           */
+/* On-Board Racing COntroller v0.2                                           */
 /*                                                                           */
 /*                                                                           */
 /*                                                                           */
@@ -13,6 +13,8 @@
 #include <ClickEncoder.h>
 #include <TimerOne.h>
 
+#include "src/CMenu_Classes.h"
+
 /*****************************************************************************/
 /*                                                                           */
 /* Defines                                                                   */
@@ -20,8 +22,8 @@
 /*****************************************************************************/
 // Rotary encoder
 #define RESW_PIN    2
-#define RECLK_PIN   3
-#define REDT_PIN    4
+#define REDT_PIN    3
+#define RECLK_PIN   4
 
 /*****************************************************************************/
 /*                                                                           */
@@ -38,7 +40,12 @@ int16_t clickEncoderValue;
 int16_t clickEncoderLast = -1;
 
 // LCD screen
-LiquidCrystal_I2C myLcd( 0x27, 16, 2 );
+LiquidCrystal_I2C Lcd( 0x27, 16, 2 );
+
+// Menu
+const int NumOfPages = 3;
+String PageNames[ NumOfPages ] = { "Page 1", "Page 2", "Page 3" };
+CMenu MainMenu( NumOfPages, PageNames );
 
 /*****************************************************************************/
 /*                                                                           */
@@ -59,15 +66,15 @@ void setup()
 
     Serial.begin( 9600 );
     Wire.begin();
-    myLcd.begin( 16, 2 );
+    Lcd.begin( 16, 2 );
 
-    myLcd.backlight();
-    myLcd.setCursor( 0, 0 );
-    myLcd.print( "OBRC" );
-    myLcd.setCursor( 0, 1 );
-    myLcd.print( "v0.1" );
+    Lcd.backlight();
+    Lcd.setCursor( 0, 0 );
+    Lcd.print( "OBRC" );
+    Lcd.setCursor( 0, 1 );
+    Lcd.print( "v0.2" );
 //    delay( 2000 );
-//    myLcd.clear();
+//    Lcd.clear();
 }
 
 /*****************************************************************************/
@@ -80,27 +87,77 @@ void setup()
 void loop()
 {
 //    debugMenu();
-    debugClickEncoder();
+//    debugClickEncoder();
+    menu();
+}
 
+/*****************************************************************************/
+/*                                                                           */
+/*                                                                           */
+/* menu()                                                                    */
+/*                                                                           */
+/*                                                                           */
+/*****************************************************************************/
+void menu()
+{
 
-    // Menu logic
+    // Menu logic !
 
     if( buttonPressed )
     {
+        switch( MainMenu.GetLevel() )
+        {
+            case 0:
+                MainMenu.SetLevel( 1 );
+                MainMenu.Print();
+                break;
+            case 1:
+                MainMenu.SetLevel( 2 );
+                MainMenu.Print();
+                break;
+            default:
+                MainMenu.SetLevel( 0 );
+                Lcd.clear();
+                break;
+        }
         buttonPressed = false;
     }
 
     if( knobTurnedCW )
     {
+        switch( MainMenu.GetLevel() )
+        {
+            case 1:
+                MainMenu.IncrementCurrentPageIndex();
+                MainMenu.Print();
+                break;
+            case 2:
+                MainMenu.Print();
+                break;
+            default:
+                break;
+        }
         knobTurnedCW = false;
     }
 
     if( knobTurnedCCW )
     {
+        switch( MainMenu.GetLevel() )
+        {
+            case 1:
+                MainMenu.DecrementCurrentPageIndex();
+                MainMenu.Print();
+                break;
+            case 2:
+                MainMenu.Print();
+                break;
+            default:
+                break;
+        }
         knobTurnedCCW = false;
     }
 
-    // Rotary encoder logic
+    // Rotary encoder logic !
 
     clickEncoderValue += clickEncoder->getValue();
 
